@@ -20,6 +20,19 @@
         };
       };
 
+      # The `sb` CLI (open-source companion client) ships as a static binary
+      # zip alongside the matching version tag on the OSS GitHub releases.
+      sbSources = {
+        x86_64-linux = {
+          url = "https://github.com/silverbulletmd/silverbullet/releases/download/${version}/sb-linux-x86_64.zip";
+          hash = "sha256-KwiZ+jL76Rcm3aU7oVTamSHzpKavfPM7KQROyx/FaMA=";
+        };
+        aarch64-linux = {
+          url = "https://github.com/silverbulletmd/silverbullet/releases/download/${version}/sb-linux-aarch64.zip";
+          hash = "sha256-QW/5obIQaNIjqv5yFvRfZrGIjK+RBJ0TYUA6+HF5zAE=";
+        };
+      };
+
       systems = builtins.attrNames sources;
       forAllSystems = f: nixpkgs.lib.genAttrs systems (system: f nixpkgs.legacyPackages.${system});
 
@@ -60,10 +73,39 @@
             platforms = systems;
           };
         };
+
+      mkSbPackage =
+        pkgs:
+        let
+          inherit (pkgs) lib;
+          src = pkgs.fetchurl sbSources.${pkgs.stdenv.hostPlatform.system};
+        in
+        pkgs.stdenvNoCC.mkDerivation {
+          pname = "sb";
+          inherit version src;
+
+          nativeBuildInputs = [ pkgs.unzip ];
+          sourceRoot = ".";
+          unpackPhase = "unzip -q $src";
+
+          installPhase = ''
+            install -Dm755 sb $out/bin/sb
+          '';
+
+          meta = {
+            description = "SilverBullet CLI — companion client for a running SilverBullet instance";
+            homepage = "https://github.com/silverbulletmd/silverbullet";
+            sourceProvenance = [ lib.sourceTypes.binaryNativeCode ];
+            license = lib.licenses.mit;
+            mainProgram = "sb";
+            platforms = builtins.attrNames sbSources;
+          };
+        };
     in
     {
       packages = forAllSystems (pkgs: rec {
         silverbullet-plus = mkPackage pkgs;
+        sb = mkSbPackage pkgs;
         default = silverbullet-plus;
       });
 
@@ -72,11 +114,16 @@
           type = "app";
           program = "${self.packages.${pkgs.stdenv.hostPlatform.system}.silverbullet-plus}/bin/silverbullet-plus";
         };
+        sb = {
+          type = "app";
+          program = "${self.packages.${pkgs.stdenv.hostPlatform.system}.sb}/bin/sb";
+        };
         default = silverbullet-plus;
       });
 
       overlays.default = final: _prev: {
         silverbullet-plus = mkPackage final;
+        sb = mkSbPackage final;
       };
     };
 }
