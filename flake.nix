@@ -6,17 +6,17 @@
   outputs =
     { self, nixpkgs }:
     let
-      version = "2.9.0";
+      version = "2.11.0";
 
       # Upstream ships per-arch AppImages from releases.silverbullet.plus.
       sources = {
         x86_64-linux = {
           url = "https://releases.silverbullet.plus/releases/${version}/SilverBullet_x86_64.AppImage";
-          hash = "sha256-GtiLG6cnZIwwMGjINYEzboCTi+0weUX7zvrtmgA7y4c=";
+          hash = "sha256-7YQ0GId03Qfzd6Au60jC3z3mm5NZi2bQTto7bL5PF58=";
         };
         aarch64-linux = {
           url = "https://releases.silverbullet.plus/releases/${version}/SilverBullet_aarch64.AppImage";
-          hash = "sha256-5zdFo4QYVdEbXtqe71fkiIbU7ZRiXpC4sHb3ubpg1h8=";
+          hash = "sha256-Y2RMmXsHqDUv8E/5Cey2OkP3PwL/s0GO1xP6R9omnGs=";
         };
       };
 
@@ -25,11 +25,11 @@
       sbSources = {
         x86_64-linux = {
           url = "https://github.com/silverbulletmd/silverbullet/releases/download/${version}/sb-linux-x86_64.zip";
-          hash = "sha256-KwiZ+jL76Rcm3aU7oVTamSHzpKavfPM7KQROyx/FaMA=";
+          hash = "sha256-tqtQkvtg5xK4os40+mCZHNjBGzUVltf9t9MOPAFl50U=";
         };
         aarch64-linux = {
           url = "https://github.com/silverbulletmd/silverbullet/releases/download/${version}/sb-linux-aarch64.zip";
-          hash = "sha256-QW/5obIQaNIjqv5yFvRfZrGIjK+RBJ0TYUA6+HF5zAE=";
+          hash = "sha256-FfIzOfY7Ofg66snztWuIiJRzh2FQ6v13p3oqnmbIvXU=";
         };
       };
 
