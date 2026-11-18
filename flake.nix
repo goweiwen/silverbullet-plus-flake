@@ -42,7 +42,7 @@
           inherit (pkgs) lib appimageTools;
           pname = "silverbullet-plus";
           src = pkgs.fetchurl sources.${pkgs.stdenv.hostPlatform.system};
-          contents = appimageTools.extractType2 { inherit pname version src; };
+          contents = appimageTools.extract { inherit pname version src; };
         in
         appimageTools.wrapType2 {
           inherit pname version src;
