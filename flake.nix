@@ -6,17 +6,17 @@
   outputs =
     { self, nixpkgs }:
     let
-      version = "2.11.0";
+      version = "2.12.1";
 
-      # Upstream ships per-arch AppImages from releases.silverbullet.plus.
+      # Upstream ships per-arch Electron AppImages from release.silverbullet.md.
       sources = {
         x86_64-linux = {
-          url = "https://releases.silverbullet.plus/releases/${version}/SilverBullet_x86_64.AppImage";
-          hash = "sha256-7YQ0GId03Qfzd6Au60jC3z3mm5NZi2bQTto7bL5PF58=";
+          url = "https://release.silverbullet.md/electron/artifacts/${version}/linux/x64/SilverBullet-${version}-linux-x86_64.AppImage";
+          hash = "sha256-cg6PDGRxi+NNGX4CJGnBX+/wuSXJ/8vP3wboWjONd28=";
         };
         aarch64-linux = {
-          url = "https://releases.silverbullet.plus/releases/${version}/SilverBullet_aarch64.AppImage";
-          hash = "sha256-Y2RMmXsHqDUv8E/5Cey2OkP3PwL/s0GO1xP6R9omnGs=";
+          url = "https://release.silverbullet.md/electron/artifacts/${version}/linux/arm64/SilverBullet-${version}-linux-arm64.AppImage";
+          hash = "sha256-dvjugSE7OGizCM7CmMIcHRPZ/RHJ1pMl+dPiO1V6V10=";
         };
       };
 
@@ -25,11 +25,11 @@
       sbSources = {
         x86_64-linux = {
           url = "https://github.com/silverbulletmd/silverbullet/releases/download/${version}/sb-linux-x86_64.zip";
-          hash = "sha256-tqtQkvtg5xK4os40+mCZHNjBGzUVltf9t9MOPAFl50U=";
+          hash = "sha256-oEsyl6AJ1bLf2YUKS32RVhg2j5WXKK3LEjsElJwLBTM=";
         };
         aarch64-linux = {
           url = "https://github.com/silverbulletmd/silverbullet/releases/download/${version}/sb-linux-aarch64.zip";
-          hash = "sha256-FfIzOfY7Ofg66snztWuIiJRzh2FQ6v13p3oqnmbIvXU=";
+          hash = "sha256-Qutgouq7U2dLCIoR7Y676eQxC2t6ufvm3dsoZye4uvM=";
         };
       };
 
@@ -47,21 +47,12 @@
         appimageTools.wrapType2 {
           inherit pname version src;
 
-          # The AppImage is a WebKitGTK shell; the base appimage runtime libs
-          # don't include webkit2gtk 4.1 or a TLS backend, so add them here.
-          extraPkgs = p: [
-            p.webkitgtk_4_1
-            p.glib-networking
-            p.libsoup_3
-          ];
-
           extraInstallCommands = ''
-            install -Dm444 ${contents}/usr/share/applications/SilverBullet.desktop \
+            install -Dm444 ${contents}/silverbullet.desktop \
               $out/share/applications/${pname}.desktop
             substituteInPlace $out/share/applications/${pname}.desktop \
-              --replace-fail 'Exec=silverbullet-app' 'Exec=${pname}'
-            install -Dm444 ${contents}/usr/share/icons/hicolor/1024x1024/apps/silverbullet-app.png \
-              $out/share/icons/hicolor/1024x1024/apps/silverbullet-app.png
+              --replace-fail 'Exec=AppRun' 'Exec=${pname}'
+            cp -r ${contents}/usr/share/icons $out/share/
           '';
 
           meta = {
